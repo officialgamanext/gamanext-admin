@@ -1,226 +1,351 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { collectionGroup, getDocs, query } from 'firebase/firestore';
+import { db } from '../../firebase';
 import Table from '../../components/Table/Table';
-import Modal from '../../components/Modal/Modal';
 import '../../components/UI/UI.css';
-import '../../components/Modal/Modal.css';
 import './Timesheet.css';
 
-const AVATAR_COLORS = ['avatar-purple','avatar-green','avatar-orange','avatar-pink','avatar-blue','avatar-teal'];
-const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const REQUIRED_HOURS = 160;
-
-const initialTimesheet = [
-  { id: 1, employee: 'Rahul Sharma', empId: 'GN-001', department: 'Engineering', checkIn: '09:02', checkOut: '18:15', totalDays: 22, hoursWorked: 172, overtimeHours: 12 },
-  { id: 2, employee: 'Priya Mehta', empId: 'GN-002', department: 'Marketing', checkIn: '09:30', checkOut: '18:00', totalDays: 21, hoursWorked: 155, overtimeHours: 0 },
-  { id: 3, employee: 'Kiran Kumar', empId: 'GN-003', department: 'Finance', checkIn: '08:45', checkOut: '17:45', totalDays: 23, hoursWorked: 184, overtimeHours: 24 },
-  { id: 4, employee: 'Anjali Singh', empId: 'GN-004', department: 'HR', checkIn: '10:00', checkOut: '19:00', totalDays: 20, hoursWorked: 160, overtimeHours: 0 },
-  { id: 5, employee: 'Sanjay Rao', empId: 'GN-005', department: 'Engineering', checkIn: '09:00', checkOut: '18:00', totalDays: 22, hoursWorked: 168, overtimeHours: 8 },
-  { id: 6, employee: 'Divya Thomas', empId: 'GN-006', department: 'Design', checkIn: '09:15', checkOut: '18:30', totalDays: 21, hoursWorked: 163, overtimeHours: 3 },
-  { id: 7, employee: 'Arjun Reddy', empId: 'GN-007', department: 'Sales', checkIn: '09:00', checkOut: '17:30', totalDays: 18, hoursWorked: 132, overtimeHours: 0 },
-  { id: 8, employee: 'Nisha Patel', empId: 'GN-008', department: 'Operations', checkIn: '08:30', checkOut: '17:00', totalDays: 10, hoursWorked: 75, overtimeHours: 0 },
-  { id: 9, employee: 'Vikram Joshi', empId: 'GN-009', department: 'Engineering', checkIn: '09:05', checkOut: '18:05', totalDays: 22, hoursWorked: 170, overtimeHours: 10 },
-  { id: 10, employee: 'Meera Nair', empId: 'GN-010', department: 'Marketing', checkIn: '09:00', checkOut: '18:45', totalDays: 22, hoursWorked: 178, overtimeHours: 18 },
+/* ─── Constants ─────────────────────────────────────── */
+const MONTHS_LIST = [
+  { v: '', l: 'All Months' },
+  { v: '01', l: 'January' }, { v: '02', l: 'February' }, { v: '03', l: 'March' },
+  { v: '04', l: 'April' },   { v: '05', l: 'May' },      { v: '06', l: 'June' },
+  { v: '07', l: 'July' },    { v: '08', l: 'August' },   { v: '09', l: 'September' },
+  { v: '10', l: 'October' }, { v: '11', l: 'November' }, { v: '12', l: 'December' },
 ];
 
-const CURRENT_YEAR = 2026;
-const getInitials = name => name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-const getColor = id => AVATAR_COLORS[(id - 1) % AVATAR_COLORS.length];
+const AVATAR_COLORS = ['avatar-purple','avatar-green','avatar-orange','avatar-pink','avatar-blue','avatar-teal'];
+const getInitials   = (name = '') => name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+const getAvatarColor = (empId = '') => AVATAR_COLORS[empId.charCodeAt(0) % AVATAR_COLORS.length];
 
-const emptyForm = { employee: '', empId: '', department: '', checkIn: '', checkOut: '', totalDays: '', hoursWorked: '', overtimeHours: 0 };
+const groupBy = (arr, fn) =>
+  arr.reduce((acc, item) => { const k = fn(item); (acc[k] = acc[k] || []).push(item); return acc; }, {});
 
+const fmtMonth = (ym) => {
+  if (!ym || !ym.includes('-')) return ym;
+  const [y, m] = ym.split('-');
+  return new Date(y, m - 1).toLocaleString('default', { month: 'long', year: 'numeric' });
+};
+
+/* ─── Main Timesheet Page ─────────────────────────── */
 export default function Timesheet() {
-  const [records, setRecords] = useState(initialTimesheet);
-  const [month, setMonth] = useState(2); // March (0-indexed)
-  const [search, setSearch] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [editRow, setEditRow] = useState(null);
-  const [form, setForm] = useState(emptyForm);
+  const [records, setRecords]   = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [fetchError, setFetchError] = useState('');
 
-  const filtered = records.filter(r =>
-    r.employee.toLowerCase().includes(search.toLowerCase()) ||
-    r.empId.toLowerCase().includes(search.toLowerCase())
-  );
+  /* filters */
+  const [sub, setSub]               = useState('daily');
+  const [searchEmp, setSearchEmp]   = useState('');
+  const [filterMonth, setFilterMonth] = useState('');
+  const [filterYear, setFilterYear]   = useState('');
 
-  const openAdd = () => { setEditRow(null); setForm(emptyForm); setShowModal(true); };
-  const openEdit = row => { setEditRow(row); setForm({ ...row }); setShowModal(true); };
-  const closeModal = () => { setShowModal(false); setEditRow(null); };
-
-  const handleSave = () => {
-    if (!form.employee) return;
-    if (editRow) {
-      setRecords(prev => prev.map(r => r.id === editRow.id ? { ...form, id: editRow.id } : r));
-    } else {
-      setRecords(prev => [...prev, { ...form, id: Date.now() }]);
+  /* ── Fetch all timesheets via collectionGroup (no orderBy = no index needed) ── */
+  const fetchRecords = useCallback(async () => {
+    setLoading(true);
+    setFetchError('');
+    try {
+      const q    = query(collectionGroup(db, 'timesheets'));
+      const snap = await getDocs(q);
+      const data = snap.docs.map(d => {
+        const empId = d.ref.parent.parent?.id || '';
+        return { id: d.id, _empId: empId, ...d.data() };
+      });
+      // Sort newest date first client-side
+      data.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      setRecords(data);
+    } catch (e) {
+      console.error('Fetch timesheets error:', e);
+      setFetchError(e.message || 'Failed to load timesheets. Check console.');
+    } finally {
+      setLoading(false);
     }
-    closeModal();
-  };
+  }, []);
 
-  const totalHours = filtered.reduce((s, r) => s + (r.hoursWorked || 0), 0);
-  const totalOT = filtered.reduce((s, r) => s + (r.overtimeHours || 0), 0);
-  const avgHours = filtered.length ? Math.round(totalHours / filtered.length) : 0;
+  useEffect(() => { fetchRecords(); }, [fetchRecords]);
 
-  const columns = [
+  /* ── Computed years from data ── */
+  const availableYears = [...new Set(records.map(r => r.date?.slice(0, 4)).filter(Boolean))].sort((a, b) => b - a);
+
+  /* ── Unique employees for filter dropdown ── */
+  const employeeNames = [...new Set(records.map(r => r._empId).filter(Boolean))].sort();
+
+  /* ── Filter ── */
+  const filtered = records.filter(r => {
+    const matchEmp   = !searchEmp    || r._empId === searchEmp;
+    const matchMonth = !filterMonth  || r.date?.slice(5, 7) === filterMonth;
+    const matchYear  = !filterYear   || r.date?.slice(0, 4) === filterYear;
+    return matchEmp && matchMonth && matchYear;
+  });
+
+  /* ── Summary stats ── */
+  const totalHours   = filtered.reduce((s, r) => s + Number(r.hoursWorked || 0), 0).toFixed(1);
+  const totalEntries = filtered.length;
+  const avgHours     = totalEntries ? (totalHours / totalEntries).toFixed(1) : 0;
+  const uniqueEmps   = new Set(filtered.map(r => r._empId)).size;
+
+  /* ── Monthly report data ── */
+  const monthlyGroups = groupBy(filtered, r => r.date?.slice(0, 7) || 'Unknown');
+  const monthlyData   = Object.entries(monthlyGroups)
+    .sort(([a], [b]) => b.localeCompare(a))
+    .map(([ym, rows]) => ({
+      id:        ym,
+      period:    ym === 'Unknown' ? 'Unknown' : fmtMonth(ym),
+      employees: new Set(rows.map(r => r._empId)).size,
+      entries:   rows.length,
+      hours:     parseFloat(rows.reduce((s, r) => s + Number(r.hoursWorked || 0), 0).toFixed(2)),
+      avgIn:     (() => { const times = rows.map(r=>r.checkIn).filter(Boolean); return times.length ? times[Math.floor(times.length/2)] : '—'; })(),
+      avgOut:    (() => { const times = rows.map(r=>r.checkOut).filter(Boolean); return times.length ? times[Math.floor(times.length/2)] : '—'; })(),
+    }));
+
+  /* ── Yearly report data ── */
+  const yearlyGroups = groupBy(filtered, r => r.date?.slice(0, 4) || 'Unknown');
+  const yearlyData   = Object.entries(yearlyGroups)
+    .sort(([a], [b]) => b.localeCompare(a))
+    .map(([yr, rows]) => ({
+      id:        yr,
+      period:    yr,
+      employees: new Set(rows.map(r => r._empId)).size,
+      entries:   rows.length,
+      hours:     parseFloat(rows.reduce((s, r) => s + Number(r.hoursWorked || 0), 0).toFixed(2)),
+      months:    new Set(rows.map(r => r.date?.slice(0, 7))).size,
+    }));
+
+  /* ── Table columns — daily list ── */
+  const dailyCols = [
     {
-      key: 'employee', label: 'Employee',
-      render: (val, row) => (
+      key: '_empId', label: 'Employee',
+      render: (val) => (
         <div className="timesheet-emp-cell">
-          <div className={`avatar avatar-sm ${getColor(row.id)}`}>{getInitials(val)}</div>
+          <div className={`avatar avatar-sm ${getAvatarColor(val)}`}>{getInitials(val)}</div>
           <div>
             <div className="timesheet-emp-name">{val}</div>
-            <div className="timesheet-emp-id">{row.empId} · {row.department}</div>
+            <div className="timesheet-emp-id">Employee ID</div>
           </div>
         </div>
       )
     },
-    { key: 'checkIn', label: 'Check In' },
-    { key: 'checkOut', label: 'Check Out' },
-    { key: 'totalDays', label: 'Days Present', render: v => `${v} days` },
+    { key: 'date',     label: 'Date' },
+    { key: 'checkIn',  label: 'Check In',  render: v => v || '—' },
+    { key: 'checkOut', label: 'Check Out', render: v => v || '—' },
     {
       key: 'hoursWorked', label: 'Hours Worked',
-      render: (val) => {
-        const pct = Math.min(100, Math.round((val / REQUIRED_HOURS) * 100));
-        const color = val >= REQUIRED_HOURS ? '#10b981' : val >= 140 ? '#f59e0b' : '#ef4444';
+      render: (v) => {
+        const hrs = Number(v || 0);
+        const pct = Math.min(100, Math.round((hrs / 9) * 100));
+        const color = hrs >= 9 ? '#10b981' : hrs >= 7 ? '#f59e0b' : '#ef4444';
         return (
           <div className="timesheet-progress">
-            <span className="timesheet-hours">{val}h</span>
+            <span className="timesheet-hours">{hrs}h</span>
             <div className="timesheet-progress-bar-bg">
               <div className="timesheet-progress-bar" style={{ width: `${pct}%`, background: color }} />
             </div>
-            <span className="timesheet-progress-text">{pct}% of {REQUIRED_HOURS}h</span>
+            <span className="timesheet-progress-text">{pct}% of 9h</span>
           </div>
         );
       }
     },
-    {
-      key: 'overtimeHours', label: 'Overtime',
-      render: (val) => val > 0
-        ? <span className="timesheet-overtime">+{val}h OT</span>
-        : <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>—</span>
-    },
+    { key: 'notes', label: 'Notes', render: v => (
+      <span style={{ maxWidth: 160, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: v ? 'var(--text-primary)' : 'var(--text-muted)' }}>
+        {v || '—'}
+      </span>
+    )},
     {
       key: 'status', label: 'Status',
       render: (_, row) => {
-        if (row.hoursWorked >= REQUIRED_HOURS) return <span className="badge badge-success"><span className="badge-dot" />On Track</span>;
-        if (row.hoursWorked >= 140) return <span className="badge badge-warning"><span className="badge-dot" />Below Target</span>;
+        const h = Number(row.hoursWorked || 0);
+        if (h >= 9) return <span className="badge badge-success"><span className="badge-dot" />On Track</span>;
+        if (h >= 7) return <span className="badge badge-warning"><span className="badge-dot" />Short</span>;
         return <span className="badge badge-danger"><span className="badge-dot" />Under Hours</span>;
       }
     },
-    {
-      key: 'actions', label: 'Actions',
-      render: (_, row) => (
-        <div className="employees-actions">
-          <button className="action-icon-btn" title="Edit" onClick={() => openEdit(row)}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z" />
-            </svg>
-          </button>
-        </div>
-      )
-    }
   ];
+
+  const monthlyCols = [
+    { key: 'period',    label: 'Month' },
+    { key: 'employees', label: 'Employees' },
+    { key: 'entries',   label: 'Total Entries' },
+    { key: 'hours',     label: 'Total Hours',    render: v => `${v}h` },
+    { key: 'avgIn',     label: 'Typical In' },
+    { key: 'avgOut',    label: 'Typical Out' },
+  ];
+
+  const yearlyCols = [
+    { key: 'period',    label: 'Year' },
+    { key: 'employees', label: 'Employees' },
+    { key: 'entries',   label: 'Total Entries' },
+    { key: 'hours',     label: 'Total Hours', render: v => `${v}h` },
+    { key: 'months',    label: 'Active Months' },
+  ];
+
+  const hasFilter = searchEmp || filterMonth || filterYear;
 
   return (
     <div>
+      {/* ── Page Header ── */}
       <div className="page-header">
         <div className="page-title-area">
           <h1 className="page-title">Timesheet</h1>
-          <p className="page-subtitle">Track working hours for {MONTHS[month]} {CURRENT_YEAR}</p>
-        </div>
-        <div className="page-toolbar">
-          <div className="timesheet-month-nav">
-            <button className="timesheet-nav-btn" onClick={() => setMonth(m => Math.max(0, m - 1))}>‹</button>
-            <span className="timesheet-month-display">{MONTHS[month]} {CURRENT_YEAR}</span>
-            <button className="timesheet-nav-btn" onClick={() => setMonth(m => Math.min(11, m + 1))}>›</button>
-          </div>
-          <div className="toolbar-search">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search employee..." />
-          </div>
-          <button className="btn btn-secondary">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            Export
-          </button>
-          <button className="btn btn-primary" onClick={openAdd}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            Add Record
-          </button>
+          <p className="page-subtitle">All employee attendance records across the organisation</p>
         </div>
       </div>
 
+      {/* ── Summary Cards ── */}
       <div className="stat-cards" style={{ gridTemplateColumns: 'repeat(4,1fr)', marginBottom: 22 }}>
         <div className="stat-card">
-          <div className="stat-card-header"><span className="stat-card-label">Total Employees</span><div className="stat-card-icon" style={{ background: '#e0e7ff' }}>👥</div></div>
-          <div className="stat-card-value">{filtered.length}</div>
+          <div className="stat-card-header"><span className="stat-card-label">Employees</span><div className="stat-card-icon" style={{ background: '#e0e7ff' }}>👥</div></div>
+          <div className="stat-card-value">{uniqueEmps}</div>
         </div>
         <div className="stat-card">
-          <div className="stat-card-header"><span className="stat-card-label">Total Hours</span><div className="stat-card-icon" style={{ background: '#d1fae5' }}>⏱️</div></div>
+          <div className="stat-card-header"><span className="stat-card-label">Total Entries</span><div className="stat-card-icon" style={{ background: '#d1fae5' }}>📋</div></div>
+          <div className="stat-card-value">{totalEntries}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-header"><span className="stat-card-label">Total Hours</span><div className="stat-card-icon" style={{ background: '#fef3c7' }}>⏱️</div></div>
           <div className="stat-card-value">{totalHours}h</div>
         </div>
         <div className="stat-card">
-          <div className="stat-card-header"><span className="stat-card-label">Avg Hours / Person</span><div className="stat-card-icon" style={{ background: '#fef3c7' }}>📊</div></div>
+          <div className="stat-card-header"><span className="stat-card-label">Avg Hours / Entry</span><div className="stat-card-icon" style={{ background: '#ede9fe' }}>📊</div></div>
           <div className="stat-card-value">{avgHours}h</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-card-header"><span className="stat-card-label">Total Overtime</span><div className="stat-card-icon" style={{ background: '#ede9fe' }}>🚀</div></div>
-          <div className="stat-card-value">{totalOT}h</div>
         </div>
       </div>
 
-      <Table columns={columns} data={filtered} emptyText="No timesheet records found." />
+      {/* ── Sub-tabs + Filters ── */}
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
+        <div className="ts-page-subtabs">
+          {[['daily','📅 Daily List'],['monthly','📆 Monthly Report'],['yearly','📊 Yearly Report']].map(([k, l]) => (
+            <button key={k} className={`ts-page-subtab${sub === k ? ' active' : ''}`} onClick={() => setSub(k)}>{l}</button>
+          ))}
+        </div>
+      </div>
 
-      {showModal && (
-        <Modal
-          title={editRow ? 'Edit Timesheet Record' : 'Add Timesheet Record'}
-          onClose={closeModal}
-          footer={
-            <>
-              <button className="btn btn-secondary" onClick={closeModal}>Cancel</button>
-              <button className="btn btn-primary" onClick={handleSave}>{editRow ? 'Save Changes' : 'Add Record'}</button>
-            </>
-          }
-        >
-          <div className="form-grid">
-            <div className="form-group">
-              <label className="form-label">Employee Name *</label>
-              <input className="form-input" placeholder="Full name" value={form.employee} onChange={e => setForm(f => ({ ...f, employee: e.target.value }))} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Employee ID</label>
-              <input className="form-input" placeholder="e.g. GN-001" value={form.empId} onChange={e => setForm(f => ({ ...f, empId: e.target.value }))} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Department</label>
-              <input className="form-input" placeholder="Department" value={form.department} onChange={e => setForm(f => ({ ...f, department: e.target.value }))} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Check In Time</label>
-              <input className="form-input" type="time" value={form.checkIn} onChange={e => setForm(f => ({ ...f, checkIn: e.target.value }))} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Check Out Time</label>
-              <input className="form-input" type="time" value={form.checkOut} onChange={e => setForm(f => ({ ...f, checkOut: e.target.value }))} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Days Present</label>
-              <input className="form-input" type="number" min="0" max="31" placeholder="e.g. 22" value={form.totalDays} onChange={e => setForm(f => ({ ...f, totalDays: parseInt(e.target.value) || 0 }))} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Hours Worked</label>
-              <input className="form-input" type="number" min="0" placeholder="e.g. 168" value={form.hoursWorked} onChange={e => setForm(f => ({ ...f, hoursWorked: parseInt(e.target.value) || 0 }))} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Overtime Hours</label>
-              <input className="form-input" type="number" min="0" placeholder="e.g. 8" value={form.overtimeHours} onChange={e => setForm(f => ({ ...f, overtimeHours: parseInt(e.target.value) || 0 }))} />
-            </div>
+      {/* ── Filters Row ── */}
+      <div className="ts-page-filters">
+        {/* Employee filter */}
+        <div className="ts-page-filter-group">
+          <label className="ts-page-filter-label">Employee</label>
+          <div className="toolbar-search" style={{ margin: 0 }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input value={searchEmp === '' ? '' : searchEmp}
+              onChange={e => setSearchEmp(e.target.value)}
+              placeholder="Search by Emp ID…"
+            />
           </div>
-        </Modal>
+        </div>
+
+        {/* Employee dropdown (from available IDs) */}
+        {employeeNames.length > 0 && (
+          <div className="ts-page-filter-group">
+            <label className="ts-page-filter-label">Select Employee</label>
+            <select className="ts-page-filter-select" value={searchEmp} onChange={e => setSearchEmp(e.target.value)}>
+              <option value="">All Employees</option>
+              {employeeNames.map(id => <option key={id} value={id}>{id}</option>)}
+            </select>
+          </div>
+        )}
+
+        {/* Month */}
+        <div className="ts-page-filter-group">
+          <label className="ts-page-filter-label">Month</label>
+          <select className="ts-page-filter-select" value={filterMonth} onChange={e => setFilterMonth(e.target.value)}>
+            {MONTHS_LIST.map(m => <option key={m.v} value={m.v}>{m.l}</option>)}
+          </select>
+        </div>
+
+        {/* Year */}
+        <div className="ts-page-filter-group">
+          <label className="ts-page-filter-label">Year</label>
+          <select className="ts-page-filter-select" value={filterYear} onChange={e => setFilterYear(e.target.value)}>
+            <option value="">All Years</option>
+            {availableYears.map(y => <option key={y}>{y}</option>)}
+          </select>
+        </div>
+
+        {/* Clear */}
+        {hasFilter && (
+          <div className="ts-page-filter-group">
+            <label className="ts-page-filter-label">&nbsp;</label>
+            <button className="btn btn-secondary" style={{ height: 36 }}
+              onClick={() => { setSearchEmp(''); setFilterMonth(''); setFilterYear(''); }}>
+              ✕ Clear
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* ── Count bar ── */}
+      <div className="ts-count-bar">
+        {loading ? 'Loading timesheet records…'
+          : `Showing ${filtered.length} of ${records.length} record${records.length !== 1 ? 's' : ''}`}
+      </div>
+
+      {/* ── Error ── */}
+      {fetchError && (
+        <div style={{ background: '#fee2e2', border: '1px solid #fca5a5', borderRadius: 8, padding: '12px 16px', marginBottom: 16, fontSize: 13, color: '#b91c1c', display: 'flex', gap: 10 }}>
+          <span>⚠️</span>
+          <span><strong>Error:</strong> {fetchError}</span>
+        </div>
+      )}
+
+      {/* ── Loading ── */}
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)', fontSize: 14 }}>
+          <div style={{ fontSize: 34, marginBottom: 12 }}>⏳</div>
+          Fetching all timesheet records…
+        </div>
+      ) : (
+        <>
+          {/* Daily List */}
+          {sub === 'daily' && (
+            <Table columns={dailyCols} data={filtered} emptyText="No timesheet records found for the selected filters." />
+          )}
+
+          {/* Monthly Report */}
+          {sub === 'monthly' && (
+            monthlyData.length === 0 ? (
+              <p style={{ color: 'var(--text-muted)', fontSize: 13 }}>No timesheet data to report.</p>
+            ) : (
+              <>
+                <div className="ts-page-report-grid">
+                  {monthlyData.map(m => (
+                    <div className="ts-page-report-card" key={m.id}>
+                      <div className="ts-page-report-period">{m.period}</div>
+                      <div className="ts-page-report-stat"><span className="ts-page-report-stat-label">Employees</span><span className="ts-page-report-stat-val">{m.employees}</span></div>
+                      <div className="ts-page-report-stat"><span className="ts-page-report-stat-label">Entries</span><span className="ts-page-report-stat-val">{m.entries}</span></div>
+                      <div className="ts-page-report-stat"><span className="ts-page-report-stat-label">Total Hours</span><span className="ts-page-report-stat-val" style={{ color: 'var(--primary)', fontWeight: 800 }}>{m.hours}h</span></div>
+                      <div className="ts-page-report-stat"><span className="ts-page-report-stat-label">Typical In</span><span className="ts-page-report-stat-val">{m.avgIn}</span></div>
+                      <div className="ts-page-report-stat"><span className="ts-page-report-stat-label">Typical Out</span><span className="ts-page-report-stat-val">{m.avgOut}</span></div>
+                    </div>
+                  ))}
+                </div>
+                <Table columns={monthlyCols} data={monthlyData} emptyText="No monthly data." />
+              </>
+            )
+          )}
+
+          {/* Yearly Report */}
+          {sub === 'yearly' && (
+            yearlyData.length === 0 ? (
+              <p style={{ color: 'var(--text-muted)', fontSize: 13 }}>No timesheet data to report.</p>
+            ) : (
+              <>
+                <div className="ts-page-report-grid">
+                  {yearlyData.map(y => (
+                    <div className="ts-page-report-card" key={y.id}>
+                      <div className="ts-page-report-period">{y.period}</div>
+                      <div className="ts-page-report-stat"><span className="ts-page-report-stat-label">Employees</span><span className="ts-page-report-stat-val">{y.employees}</span></div>
+                      <div className="ts-page-report-stat"><span className="ts-page-report-stat-label">Entries</span><span className="ts-page-report-stat-val">{y.entries}</span></div>
+                      <div className="ts-page-report-stat"><span className="ts-page-report-stat-label">Total Hours</span><span className="ts-page-report-stat-val" style={{ color: 'var(--primary)', fontWeight: 800 }}>{y.hours}h</span></div>
+                      <div className="ts-page-report-stat"><span className="ts-page-report-stat-label">Active Months</span><span className="ts-page-report-stat-val">{y.months}</span></div>
+                    </div>
+                  ))}
+                </div>
+                <Table columns={yearlyCols} data={yearlyData} emptyText="No yearly data." />
+              </>
+            )
+          )}
+        </>
       )}
     </div>
   );
