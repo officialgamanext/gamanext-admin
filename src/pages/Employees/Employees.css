@@ -1,0 +1,395 @@
+/* ── Employee Name Cell ── */
+.employees-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.employees-name-text {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.employees-email {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+/* ── Action Buttons ── */
+.employees-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.action-icon-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.action-icon-btn:hover {
+  background: #f3f4f6;
+  color: var(--text-primary);
+}
+
+.action-icon-btn.danger:hover {
+  background: var(--danger-light);
+  color: var(--danger);
+  border-color: #fca5a5;
+}
+
+/* ── Large Add Employee Modal ── */
+.emp-modal-box {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  width: 100%;
+  max-width: 780px;
+  animation: slideUp 0.22s ease;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.emp-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 26px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.emp-modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.emp-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.emp-modal-close:hover {
+  background: #f3f4f6;
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+.emp-modal-body {
+  padding: 0 26px 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.emp-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 26px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ── Section Dividers ── */
+.emp-section {
+  margin-top: 22px;
+}
+
+.emp-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.emp-section-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.emp-section-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.emp-section-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── Form Grid inside modal ── */
+.emp-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+.emp-form-grid.cols-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.emp-form-grid.cols-4 {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.emp-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.emp-form-group.span-2 {
+  grid-column: span 2;
+}
+
+.emp-form-group.span-3 {
+  grid-column: span 3;
+}
+
+.emp-form-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.3px;
+}
+
+.emp-form-label span {
+  color: var(--danger);
+  margin-left: 2px;
+}
+
+.emp-form-input,
+.emp-form-select,
+.emp-form-textarea {
+  height: 38px;
+  padding: 0 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: var(--font);
+  color: var(--text-primary);
+  background: #fff;
+  transition: all 0.18s;
+  width: 100%;
+}
+
+.emp-form-input:focus,
+.emp-form-select:focus,
+.emp-form-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+  outline: none;
+}
+
+.emp-form-input:disabled,
+.emp-form-input[readonly] {
+  background: #f9fafb;
+  color: var(--text-muted);
+  cursor: not-allowed;
+  border-color: #e5e7eb;
+}
+
+.emp-form-textarea {
+  height: auto;
+  padding: 10px 12px;
+  resize: vertical;
+  min-height: 72px;
+}
+
+/* ── Password Field ── */
+.emp-password-wrap {
+  position: relative;
+}
+
+.emp-password-wrap .emp-form-input {
+  padding-right: 40px;
+}
+
+.emp-password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.emp-password-toggle:hover {
+  color: var(--primary);
+}
+
+/* ── Auto-gen badge ── */
+.emp-autogen-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--primary-light);
+  border-radius: 20px;
+  padding: 2px 8px;
+  margin-left: 6px;
+}
+
+/* ── Loading spinner in button ── */
+.btn-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Error banner ── */
+.emp-error-banner {
+  background: var(--danger-light);
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #b91c1c;
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Success toast ── */
+.emp-toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+  background: #1a1a2e;
+  color: #fff;
+  padding: 13px 20px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  animation: toastIn 0.3s ease;
+}
+
+@keyframes toastIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.emp-toast-icon {
+  width: 22px;
+  height: 22px;
+  background: #10b981;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.emp-toast-icon.warn {
+  background: var(--warning);
+}
+
+/* ── Delete confirm dialog ── */
+.delete-confirm-box {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  width: 100%;
+  max-width: 400px;
+  animation: slideUp 0.22s ease;
+  overflow: hidden;
+}
+
+.delete-confirm-top {
+  background: linear-gradient(135deg, #fee2e2, #fff);
+  padding: 28px 28px 20px;
+  text-align: center;
+}
+
+.delete-confirm-emoji {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.delete-confirm-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.delete-confirm-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.delete-confirm-name {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.delete-confirm-footer {
+  display: flex;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  justify-content: flex-end;
+}
+
