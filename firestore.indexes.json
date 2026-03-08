@@ -1,0 +1,12 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "leaves",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "fromDate", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

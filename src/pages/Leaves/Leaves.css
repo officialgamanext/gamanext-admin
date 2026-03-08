@@ -1,69 +1,176 @@
 .leaves-approve-btn {
-  width: 28px;
-  height: 28px;
+  width: 28px; height: 28px;
   border-radius: 7px;
   border: 1px solid #bbf7d0;
   background: var(--accent-light);
   color: #059669;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   cursor: pointer;
   transition: all 0.15s;
 }
-
-.leaves-approve-btn:hover {
-  background: #10b981;
-  color: #fff;
-  border-color: #10b981;
-}
+.leaves-approve-btn:hover { background: #10b981; color: #fff; border-color: #10b981; }
 
 .leaves-reject-btn {
-  width: 28px;
-  height: 28px;
+  width: 28px; height: 28px;
   border-radius: 7px;
   border: 1px solid #fca5a5;
   background: var(--danger-light);
   color: var(--danger);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   cursor: pointer;
   transition: all 0.15s;
 }
+.leaves-reject-btn:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
 
-.leaves-reject-btn:hover {
-  background: var(--danger);
-  color: #fff;
-  border-color: var(--danger);
-}
-
-.leaves-emp-cell {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.leaves-emp-name {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.leaves-emp-dept {
-  font-size: 12px;
+.leaves-edit-btn {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: transparent;
   color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
 }
+.leaves-edit-btn:hover { background: #e0e7ff; color: var(--primary); border-color: #c7d2fe; }
 
-.leaves-actions {
-  display: flex;
-  gap: 5px;
-  align-items: center;
+.leaves-delete-btn {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
 }
+.leaves-delete-btn:hover { background: var(--danger-light); color: var(--danger); border-color: #fca5a5; }
+
+.leaves-emp-cell { display: flex; align-items: center; gap: 10px; }
+.leaves-emp-name { font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
+.leaves-emp-dept { font-size: 12px; color: var(--text-muted); }
+.leaves-actions  { display: flex; gap: 5px; align-items: center; }
 
 .leaves-reason-cell {
   max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: block;
+}
+
+/* ── Filters row ── */
+.leaves-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.leaves-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 130px;
+}
+.leaves-filter-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.leaves-filter-select,
+.leaves-filter-input {
+  height: 36px;
+  padding: 0 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: var(--font);
+  color: var(--text-primary);
+  background: #fff;
+  transition: all 0.18s;
+}
+.leaves-filter-select:focus,
+.leaves-filter-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+  outline: none;
+}
+.leaves-filter-input { width: 180px; }
+
+/* ── Edit modal form ── */
+.lv-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.lv-edit-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.lv-edit-group.span-2 { grid-column: span 2; }
+.lv-edit-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.lv-edit-input,
+.lv-edit-select,
+.lv-edit-textarea {
+  height: 38px;
+  padding: 0 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: var(--font);
+  color: var(--text-primary);
+  background: #fff;
+  width: 100%;
+  transition: all 0.18s;
+}
+.lv-edit-input:focus,
+.lv-edit-select:focus,
+.lv-edit-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+  outline: none;
+}
+.lv-edit-textarea { height: auto; padding: 10px 12px; resize: vertical; min-height: 72px; }
+
+/* ── Delete confirm ── */
+.lv-del-box {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  max-width: 400px;
+  width: 100%;
+  overflow: hidden;
+  animation: slideUp 0.22s ease;
+}
+.lv-del-top {
+  background: linear-gradient(135deg, #fee2e2, #fff);
+  padding: 26px 28px 18px;
+  text-align: center;
+}
+.lv-del-emoji { font-size: 38px; margin-bottom: 10px; }
+.lv-del-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 5px; }
+.lv-del-sub   { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+.lv-del-footer {
+  display: flex; gap: 10px; padding: 14px 20px;
+  border-top: 1px solid var(--border); justify-content: flex-end;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* ── Results count ── */
+.leaves-count-bar {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  font-weight: 500;
 }
