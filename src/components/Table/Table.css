@@ -132,3 +132,28 @@ tbody td {
   font-size: 14px;
   color: var(--text-muted);
 }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .table-wrapper { border-radius: 10px; }
+  .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  thead th { padding: 9px 12px; font-size: 11px; }
+  tbody td { padding: 10px 12px; font-size: 12.5px; }
+  .table-pagination {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+    padding: 10px 12px;
+  }
+  .table-pagination-info { font-size: 12px; }
+  .table-pagination-btn { min-width: 28px; height: 28px; font-size: 12px; }
+  .table-empty { padding: 36px 16px; }
+  .table-empty-icon { font-size: 32px; }
+  .table-empty p { font-size: 13px; }
+}
+
+@media (max-width: 480px) {
+  thead th { padding: 8px 10px; }
+  tbody td { padding: 9px 10px; white-space: normal; }
+}
+

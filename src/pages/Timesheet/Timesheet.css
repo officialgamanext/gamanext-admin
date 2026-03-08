@@ -127,3 +127,18 @@
   margin-bottom: 12px;
   font-weight: 500;
 }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .ts-page-report-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .ts-page-subtabs { width: 100%; justify-content: space-between; }
+  .ts-page-subtab { flex: 1; text-align: center; }
+  .ts-page-filters { flex-direction: column; align-items: stretch; }
+  .ts-page-filter-group { width: 100%; }
+  .ts-page-report-grid { grid-template-columns: 1fr; gap: 12px; }
+  .timesheet-emp-cell { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+

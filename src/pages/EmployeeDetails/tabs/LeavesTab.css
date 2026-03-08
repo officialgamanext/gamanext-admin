@@ -203,3 +203,25 @@
   transition: all 0.15s;
 }
 .lv-delete-btn:hover { background: var(--danger-light); color: var(--danger); border-color: #fca5a5; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .lv-summary { grid-template-columns: repeat(2, 1fr); }
+  .lv-form-grid { grid-template-columns: 1fr 1fr; }
+  .lv-form-group:last-child { grid-column: span 2; }
+}
+
+@media (max-width: 768px) {
+  .lv-summary { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+  .lv-add-card { padding: 16px; margin-bottom: 14px; }
+  .lv-form-grid { grid-template-columns: 1fr; gap: 12px; }
+  .lv-form-group:last-child { grid-column: span 1; }
+  .lv-report-grid { grid-template-columns: 1fr; gap: 12px; }
+  .lv-subtabs { width: 100%; justify-content: space-between; margin-bottom: 14px; }
+  .lv-subtab { flex: 1; text-align: center; padding: 7px 10px; font-size: 12px; }
+}
+
+@media (max-width: 480px) {
+  .lv-summary { grid-template-columns: 1fr; }
+}
+

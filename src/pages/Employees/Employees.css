@@ -393,3 +393,24 @@
   justify-content: flex-end;
 }
 
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .emp-form-grid, .emp-form-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+  .emp-form-group.span-3 { grid-column: span 2; }
+}
+
+@media (max-width: 768px) {
+  .emp-modal-box { border-radius: 12px; max-height: 100vh; height: 100%; max-width: 100%; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+  .emp-modal-body { padding: 0 16px 16px; }
+  .emp-modal-header { padding: 14px 16px; }
+  .emp-modal-footer { padding: 12px 16px; }
+  .emp-form-grid, .emp-form-grid.cols-2, .emp-form-grid.cols-4 { grid-template-columns: 1fr; gap: 12px; }
+  .emp-form-group.span-2, .emp-form-group.span-3 { grid-column: span 1; }
+  
+  .employees-name-cell { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .employees-actions { flex-direction: column; gap: 4px; align-items: center; }
+  
+  .emp-toast { bottom: 20px; right: 20px; left: 20px; justify-content: center; }
+}
+
+

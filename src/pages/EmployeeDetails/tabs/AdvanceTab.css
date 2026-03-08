@@ -236,3 +236,22 @@
   color: var(--text-muted);
 }
 .adv-chevron.open { transform: rotate(180deg); }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .adv-summary { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .adv-form-row { grid-template-columns: 1fr 1fr; }
+  .adv-form-row button { grid-column: span 2; }
+}
+
+@media (max-width: 768px) {
+  .adv-summary { grid-template-columns: 1fr; margin-bottom: 16px; gap: 10px; }
+  .adv-card-head { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .adv-card-right { width: 100%; justify-content: space-between; }
+  .adv-form-row { grid-template-columns: 1fr; gap: 12px; }
+  .adv-form-row button { grid-column: span 1; }
+  .adv-inst-add-form { grid-template-columns: 1fr; gap: 12px; }
+  .adv-inst-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .adv-inst-item-left { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+

@@ -9,10 +9,41 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-width: 0; /* prevent flex overflow */
 }
 
 .layout-main {
   flex: 1;
   padding: 24px;
   overflow-y: auto;
+}
+
+/* Mobile backdrop */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 99;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── Tablet (≤ 1024px) ── */
+@media (max-width: 1024px) {
+  .layout-content {
+    margin-left: var(--sidebar-width);
+  }
+  .layout-main {
+    padding: 18px;
+  }
+}
+
+/* ── Mobile (≤ 768px) ── */
+@media (max-width: 768px) {
+  .layout-content {
+    margin-left: 0;
+  }
+  .layout-main {
+    padding: 14px;
+  }
 }

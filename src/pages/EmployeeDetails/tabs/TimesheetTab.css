@@ -128,3 +128,19 @@
   border-radius: 10px;
   background: var(--primary);
 }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .ts-form-row { grid-template-columns: 1fr 1fr; }
+  .ts-form-row button { grid-column: span 2; }
+}
+
+@media (max-width: 768px) {
+  .ts-subtabs { width: 100%; justify-content: space-between; }
+  .ts-subtab { flex: 1; text-align: center; }
+  .ts-add-card { padding: 16px; margin-bottom: 14px; }
+  .ts-form-row { grid-template-columns: 1fr; gap: 12px; }
+  .ts-form-row button { grid-column: span 1; }
+  .ts-report-grid { grid-template-columns: 1fr; gap: 12px; }
+}
+

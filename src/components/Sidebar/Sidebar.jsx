@@ -38,7 +38,6 @@ const navItems = [
       {
         label: 'Leaves',
         path: '/leaves',
-        badge: 5,
         icon: (
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
@@ -62,12 +61,21 @@ const navItems = [
   }
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ open, onClose }) {
   const { user, logout } = useAuth();
   const emailInitial = user?.email ? user.email[0].toUpperCase() : 'A';
 
+  const handleLogout = () => { logout(); onClose?.(); };
+
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar${open ? ' sidebar-open' : ''}`}>
+      {/* Close button — mobile only */}
+      <button className="sidebar-close-btn" onClick={onClose} title="Close menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+
       <div className="sidebar-logo">
         <div className="sidebar-logo-icon">G</div>
         <div className="sidebar-logo-text">
@@ -84,15 +92,13 @@ export default function Sidebar() {
               <NavLink
                 key={item.path}
                 to={item.path}
+                onClick={onClose}
                 className={({ isActive }) =>
                   `sidebar-nav-item${isActive ? ' active' : ''}`
                 }
               >
                 {item.icon}
                 {item.label}
-                {item.badge && (
-                  <span className="sidebar-nav-badge">{item.badge}</span>
-                )}
               </NavLink>
             ))}
           </nav>
@@ -103,35 +109,13 @@ export default function Sidebar() {
         <div className="sidebar-user">
           <div className="sidebar-user-avatar">{emailInitial}</div>
           <div className="sidebar-user-info">
-            <span className="sidebar-user-name" style={{ fontSize: 11.5, maxWidth: 110, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {user?.email || 'Admin'}
-            </span>
+            <span className="sidebar-user-name">{user?.email || 'Admin'}</span>
             <span className="sidebar-user-role">Admin</span>
           </div>
         </div>
         <button
-          onClick={logout}
-          title="Logout"
-          style={{
-            marginTop: 10,
-            width: '100%',
-            height: 36,
-            background: 'rgba(239,68,68,0.08)',
-            border: '1px solid rgba(239,68,68,0.2)',
-            borderRadius: 8,
-            color: '#ef4444',
-            fontSize: 12.5,
-            fontWeight: 600,
-            fontFamily: 'var(--font)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 6,
-            transition: 'all 0.15s',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.15)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; }}
+          onClick={handleLogout}
+          className="sidebar-logout-btn"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -144,4 +128,3 @@ export default function Sidebar() {
     </aside>
   );
 }
-
