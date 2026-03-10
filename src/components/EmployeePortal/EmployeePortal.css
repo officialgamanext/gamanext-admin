@@ -1,0 +1,293 @@
+/* ── Employee Portal Sidebar ── */
+.ep-sidebar {
+  width: 240px;
+  height: 100vh;
+  background: var(--sidebar-bg, #1a1a2e);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+}
+
+.ep-sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 18px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.ep-sidebar-logo-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: #fff;
+}
+
+.ep-sidebar-brand {
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.2px;
+}
+
+.ep-sidebar-brand-sub {
+  font-size: 10.5px;
+  color: rgba(255,255,255,0.45);
+  font-weight: 500;
+  margin-top: 1px;
+}
+
+/* Profile block */
+.ep-sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 14px 18px;
+  background: rgba(255,255,255,0.04);
+  margin: 12px 12px 0;
+  border-radius: 10px;
+}
+
+.ep-sidebar-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ep-sidebar-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ep-sidebar-empid {
+  font-size: 10.5px;
+  color: rgba(255,255,255,0.4);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* Nav */
+.ep-sidebar-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: rgba(255,255,255,0.3);
+  padding: 18px 18px 6px;
+}
+
+.ep-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 10px;
+}
+
+.ep-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  transition: all 0.15s;
+  text-decoration: none;
+}
+
+.ep-nav-item:hover {
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+}
+
+.ep-nav-item.active {
+  background: rgba(99,102,241,0.2);
+  color: #fff;
+  font-weight: 600;
+  border-left: 3px solid #6366f1;
+}
+
+/* Footer */
+.ep-sidebar-footer {
+  margin-top: auto;
+  padding: 16px 12px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.ep-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 14px;
+  border-radius: 8px;
+  background: rgba(239,68,68,0.12);
+  color: #f87171;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ep-logout-btn:hover {
+  background: rgba(239,68,68,0.22);
+}
+
+/* ── Portal App Shell ── */
+.ep-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.ep-main {
+  flex: 1;
+  min-width: 0;
+  background: var(--main-bg, #f4f6fa);
+  padding: 28px 28px 60px;
+  overflow-y: auto;
+}
+
+/* ── Shell layout update ── */
+.ep-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.ep-desktop-sidebar {
+  flex-shrink: 0;
+}
+
+.ep-main-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Mobile Top Header ── */
+.ep-mobile-header {
+  display: none; /* hidden on desktop */
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  height: 56px;
+  background: var(--sidebar-bg, #1a1a2e);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  flex-shrink: 0;
+}
+
+.ep-hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.ep-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 2px;
+  transition: background 0.15s;
+}
+
+.ep-hamburger:hover span { background: #fff; }
+
+.ep-mobile-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.ep-mobile-logo {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  object-fit: contain;
+  background: #fff;
+}
+
+.ep-mobile-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Mobile Drawer ── */
+.ep-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100vh;
+  z-index: 1000;
+  transform: translateX(-100%);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.ep-drawer.open {
+  transform: translateX(0);
+}
+
+.ep-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── Responsive breakpoints ── */
+@media (max-width: 768px) {
+  .ep-desktop-sidebar { display: none; }
+  .ep-mobile-header   { display: flex; }
+  .ep-main {
+    padding: 16px 14px 80px;
+  }
+}
+
+@media (min-width: 769px) {
+  .ep-drawer          { display: none; }
+  .ep-drawer-backdrop { display: none; }
+  .ep-mobile-header   { display: none; }
+  .ep-desktop-sidebar { display: block; }
+}

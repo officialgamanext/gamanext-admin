@@ -1,14 +1,18 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Layout from "./components/Layout/Layout";
+import EmployeePortalLayout from "./components/EmployeePortal/EmployeePortalSidebar"
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Employees from "./pages/Employees/Employees";
 import EmployeeDetails from "./pages/EmployeeDetails/EmployeeDetails";
 import Leaves from "./pages/Leaves/Leaves";
 import Timesheet from "./pages/Timesheet/Timesheet";
 import OfferLetter from "./pages/OfferLetter/OfferLetter";
+import EmployeeLeaves from "./pages/EmployeePortal/EmployeeLeaves";
+import EmployeeTimesheet from "./pages/EmployeePortal/EmployeeTimesheet";
 import Login from "./pages/Login/Login";
 import "./index.css";
+import "./components/EmployeePortal/EmployeePortal.css";
 
 /* ── Full-screen loader while checking auth ── */
 function SplashLoader() {
@@ -37,31 +41,55 @@ function SplashLoader() {
   );
 }
 
+/* EmployeePortalLayout is imported directly from EmployeePortalSidebar.jsx */
+
 /* ── Inner app — uses auth context ── */
 function AppRoutes() {
-  const { user, loading, isAdmin } = useAuth();
+  const { user, loading, isAdmin, isEmployee } = useAuth();
 
   if (loading) return <SplashLoader />;
 
-  // Not logged in or is an employee — show login
-  if (!user || !isAdmin) return <Login />;
+  // Not logged in — show login
+  if (!user) return <Login />;
 
-  // Logged in as admin — show full app
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="dashboard"          element={<Dashboard />} />
-          <Route path="employees"          element={<Employees />} />
-          <Route path="employees/:empId"   element={<EmployeeDetails />} />
-          <Route path="leaves"             element={<Leaves />} />
-          <Route path="timesheet"          element={<Timesheet />} />
-          <Route path="offer-letter"        element={<OfferLetter />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
+  // ── Employee portal ──
+  if (isEmployee) {
+    return (
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<EmployeePortalLayout />}>
+            <Route index element={<Navigate to="/my/leaves" replace />} />
+            <Route path="my/leaves"     element={<EmployeeLeaves />} />
+            <Route path="my/timesheet"  element={<EmployeeTimesheet />} />
+            {/* Catch-all redirect */}
+            <Route path="*" element={<Navigate to="/my/leaves" replace />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    );
+  }
+
+  // ── Admin portal ──
+  if (isAdmin) {
+    return (
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Navigate to="/dashboard" replace />} />
+            <Route path="dashboard"          element={<Dashboard />} />
+            <Route path="employees"          element={<Employees />} />
+            <Route path="employees/:empId"   element={<EmployeeDetails />} />
+            <Route path="leaves"             element={<Leaves />} />
+            <Route path="timesheet"          element={<Timesheet />} />
+            <Route path="offer-letter"       element={<OfferLetter />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    );
+  }
+
+  // Fallback
+  return <Login />;
 }
 
 export default function App() {

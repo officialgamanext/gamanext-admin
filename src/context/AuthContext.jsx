@@ -6,39 +6,49 @@ import { auth, db } from '../firebase';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser]           = useState(null);   // Firebase user
-  const [loading, setLoading]     = useState(true);   // Checking auth state
-  const [isAdmin, setIsAdmin]     = useState(false);  // Passed employee check
+  const [user, setUser]               = useState(null);
+  const [loading, setLoading]         = useState(true);
+  const [isAdmin, setIsAdmin]         = useState(false);
+  const [isEmployee, setIsEmployee]   = useState(false);
+  const [employeeData, setEmployeeData] = useState(null); // the Firestore employee record
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        // Check: is this user's email in the employees collection as 'username'?
-        // If YES → employee account → not allowed → sign out immediately
         try {
           const q    = query(
             collection(db, 'employees'),
             where('username', '==', firebaseUser.email)
           );
           const snap = await getDocs(q);
+
           if (!snap.empty) {
-            // This is an employee account — block access
-            await signOut(auth);
-            setUser(null);
+            // ✅ Employee account — allow login, set employee context
+            const empDoc = snap.docs[0];
+            setUser(firebaseUser);
             setIsAdmin(false);
+            setIsEmployee(true);
+            setEmployeeData({ id: empDoc.id, ...empDoc.data() });
           } else {
-            // Not an employee → admin access granted
+            // ✅ Not an employee → admin
             setUser(firebaseUser);
             setIsAdmin(true);
+            setIsEmployee(false);
+            setEmployeeData(null);
           }
         } catch (e) {
           console.error('Auth check error:', e);
+          // On error, default to admin (existing behaviour)
           setUser(firebaseUser);
           setIsAdmin(true);
+          setIsEmployee(false);
+          setEmployeeData(null);
         }
       } else {
         setUser(null);
         setIsAdmin(false);
+        setIsEmployee(false);
+        setEmployeeData(null);
       }
       setLoading(false);
     });
@@ -48,7 +58,7 @@ export function AuthProvider({ children }) {
   const logout = () => signOut(auth);
 
   return (
-    <AuthContext.Provider value={{ user, loading, isAdmin, logout }}>
+    <AuthContext.Provider value={{ user, loading, isAdmin, isEmployee, employeeData, logout }}>
       {children}
     </AuthContext.Provider>
   );

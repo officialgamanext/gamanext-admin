@@ -1,11 +1,6 @@
 import { useState } from 'react';
-import {
-  signInWithEmailAndPassword, signOut
-} from 'firebase/auth';
-import {
-  collection, getDocs, query, where
-} from 'firebase/firestore';
-import { auth, db } from '../../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../firebase';
 import './Login.css';
 
 export default function Login() {
@@ -22,26 +17,9 @@ export default function Login() {
     setError('');
 
     try {
-      // Step 1 — Firebase email/password sign-in
-      const cred = await signInWithEmailAndPassword(auth, email.trim(), password);
-
-      // Step 2 — Check if this email matches any employee's username in Firestore
-      const q    = query(collection(db, 'employees'), where('username', '==', email.trim().toLowerCase()));
-      const snap = await getDocs(q);
-
-      if (!snap.empty) {
-        // This is an employee account — deny access
-        await signOut(auth);
-        setError(
-          'Access denied. Employee accounts cannot log in to the admin panel. ' +
-          'Please use an admin account.'
-        );
-        return;
-      }
-
-      // Step 3 — Not an employee → access granted (AuthContext will pick this up)
-      // No need to do anything here; onAuthStateChanged in AuthContext handles it.
-
+      // Firebase sign-in — AuthContext will detect admin vs employee automatically
+      await signInWithEmailAndPassword(auth, email.trim(), password);
+      // No need to do anything else — onAuthStateChanged in AuthContext handles routing
     } catch (err) {
       console.error('Login error:', err);
       switch (err.code) {
@@ -75,10 +53,10 @@ export default function Login() {
           <div className="login-logo">🚀</div>
           <span className="login-company-name">GamaNext</span>
         </div>
-        <p className="login-tagline">Admin Management Portal</p>
+        <p className="login-tagline">Management Portal</p>
 
         <div className="login-heading">Welcome back</div>
-        <p className="login-sub">Sign in to access the admin panel</p>
+        <p className="login-sub">Sign in with your admin or employee account</p>
 
         {/* Error */}
         {error && (
@@ -166,7 +144,7 @@ export default function Login() {
         </form>
 
         <div className="login-footer">
-          <strong>GamaNext Admin Panel</strong> · Admin access only
+          <strong>GamaNext</strong> · Admin &amp; Employee Portal
         </div>
       </div>
     </div>

@@ -1,0 +1,294 @@
+/* ── Balance Cards ── */
+.elv-balance-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.elv-balance-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  box-shadow: var(--card-shadow);
+  border-top: 3px solid transparent;
+}
+
+.elv-balance-card.green  { border-top-color: #10b981; }
+.elv-balance-card.blue   { border-top-color: #6366f1; }
+.elv-balance-card.red    { border-top-color: #ef4444; }
+.elv-balance-card.grey   { border-top-color: #d1d5db; }
+.elv-balance-card.purple { border-top-color: #8b5cf6; }
+
+.elv-balance-icon { font-size: 22px; }
+
+.elv-balance-val {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.elv-balance-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.elv-balance-label span {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* ── Limit info bar ── */
+.elv-limit-bar {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #1e40af;
+  margin-bottom: 18px;
+}
+
+/* ── Leave Cards ── */
+.elv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.elv-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: var(--card-shadow);
+  transition: box-shadow 0.15s;
+}
+
+.elv-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.elv-card-left { flex: 1; min-width: 0; }
+
+.elv-card-type {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.elv-card-dates {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.elv-card-reason {
+  font-size: 12px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.elv-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.elv-card-days {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.elv-lop-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: #fee2e2;
+  color: #b91c1c;
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+
+/* ── Empty state ── */
+.elv-empty {
+  text-align: center;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.elv-empty-icon { font-size: 40px; }
+
+.elv-empty-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+/* ── Modal ── */
+.elv-modal-box {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  width: 100%;
+  max-width: 560px;
+  overflow: hidden;
+  animation: slideUp 0.22s ease;
+}
+
+.elv-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.elv-modal-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.elv-modal-close {
+  font-size: 20px;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.elv-modal-body { padding: 20px 22px; }
+
+.elv-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 22px;
+  border-top: 1px solid var(--border);
+  background: #f9fafb;
+}
+
+/* Form inside modal */
+.elv-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.elv-form-group { display: flex; flex-direction: column; gap: 5px; }
+.elv-form-group.span-2 { grid-column: span 2; }
+
+.elv-form-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.elv-form-input,
+.elv-form-select,
+.elv-form-textarea {
+  height: 38px;
+  padding: 0 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: var(--font);
+  color: var(--text-primary);
+  background: #fff;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+
+.elv-form-textarea {
+  height: auto;
+  padding: 10px 12px;
+  resize: vertical;
+  min-height: 70px;
+}
+
+.elv-form-input:focus,
+.elv-form-select:focus,
+.elv-form-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+  outline: none;
+}
+
+/* Preview box inside modal */
+.elv-leave-preview {
+  background: #f9fafb;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.elv-preview-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.elv-preview-row.lop strong { color: #ef4444; }
+.elv-preview-row.ok strong  { color: #10b981; }
+
+.elv-lop-note {
+  font-size: 11.5px;
+  color: #b91c1c;
+  background: #fee2e2;
+  border-radius: 6px;
+  padding: 7px 10px;
+  margin-top: 4px;
+}
+
+.elv-error {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #b91c1c;
+  margin-top: 8px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .elv-balance-grid { grid-template-columns: repeat(2, 1fr); }
+  .elv-form-grid    { grid-template-columns: 1fr; }
+  .elv-form-group.span-2 { grid-column: span 1; }
+  .elv-card { flex-direction: column; align-items: flex-start; }
+  .elv-card-right { flex-direction: row; align-items: center; }
+}
+
+@media (max-width: 480px) {
+  .elv-balance-grid { grid-template-columns: 1fr 1fr; }
+}

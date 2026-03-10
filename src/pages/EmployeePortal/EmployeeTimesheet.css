@@ -1,0 +1,310 @@
+/* ── Stat Cards ── */
+.ets-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.ets-stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  box-shadow: var(--card-shadow);
+}
+
+.ets-stat-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.ets-stat-val {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.ets-stat-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.ets-stat-label span {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* ── Timesheet entry cards ── */
+.ets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ets-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: var(--card-shadow);
+  transition: box-shadow 0.15s;
+}
+
+.ets-card:hover {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.ets-card-date {
+  min-width: 90px;
+}
+
+.ets-card-day {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ets-card-datenum {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 2px;
+}
+
+.ets-card-times {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ets-time-badge {
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.ets-time-badge.in  { background: #d1fae5; color: #065f46; }
+.ets-time-badge.out { background: #fee2e2; color: #991b1b; }
+
+.ets-time-sep {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.ets-card-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 80px;
+}
+
+.ets-mini-bar-bg {
+  height: 5px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+  width: 80px;
+}
+
+.ets-mini-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s;
+}
+
+.ets-card-notes {
+  flex: 1;
+  font-size: 12px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-style: italic;
+}
+
+.ets-card-status {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ── Empty ── */
+.ets-empty {
+  text-align: center;
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ── Modal ── */
+.ets-modal-box {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+  animation: slideUp 0.22s ease;
+}
+
+.ets-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ets-modal-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ets-modal-close {
+  font-size: 20px;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.ets-modal-body { padding: 20px 22px; }
+
+.ets-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 22px;
+  border-top: 1px solid var(--border);
+  background: #f9fafb;
+}
+
+/* Form */
+.ets-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.ets-form-group { display: flex; flex-direction: column; gap: 5px; }
+.ets-form-group.span-2 { grid-column: span 2; }
+
+.ets-form-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.ets-form-input,
+.ets-form-textarea {
+  height: 38px;
+  padding: 0 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: var(--font);
+  color: var(--text-primary);
+  background: #fff;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+
+.ets-form-textarea {
+  height: auto;
+  padding: 10px 12px;
+  resize: vertical;
+  min-height: 70px;
+}
+
+.ets-form-input:focus,
+.ets-form-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+  outline: none;
+}
+
+/* Preview block */
+.ets-preview {
+  background: #f9fafb;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.ets-preview-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.ets-progress-bg {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.ets-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s;
+}
+
+.ets-preview-note {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.ets-warn {
+  font-size: 12px;
+  color: #b45309;
+  background: #fef3c7;
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin-top: 6px;
+}
+
+.ets-error {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #b91c1c;
+  margin-top: 8px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .ets-stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .ets-card      { flex-wrap: wrap; gap: 12px; }
+  .ets-form-grid { grid-template-columns: 1fr; }
+  .ets-form-group.span-2 { grid-column: span 1; }
+}
