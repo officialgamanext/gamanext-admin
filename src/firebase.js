@@ -14,6 +14,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
+// Secondary app used ONLY for createUserWithEmailAndPassword
+// so the admin's auth session is never replaced by the new employee.
+const secondaryApp = initializeApp(firebaseConfig, 'secondary');
+
 export const auth = getAuth(app);
+export const secondaryAuth = getAuth(secondaryApp);
 export const db = getFirestore(app);
 export default app;

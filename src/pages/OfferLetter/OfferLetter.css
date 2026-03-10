@@ -1,0 +1,594 @@
+/* ═══════════════════════════════════
+   OFFER LETTER PAGE — BASE STYLES
+═══════════════════════════════════ */
+.ol-page {
+  min-height: 100%;
+}
+
+/* ── Layout ── */
+.ol-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.ol-form-col {
+  flex: 0 0 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: flex-basis 0.3s ease;
+}
+
+.ol-layout.preview-open .ol-form-col {
+  flex: 0 0 50%;
+}
+
+.ol-preview-col {
+  flex: 0 0 50%;
+  min-width: 0;
+}
+
+/* ─── Form Section ─────────────────── */
+.ol-section {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+.ol-section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--border);
+  background: #f9fafb;
+}
+
+.ol-section-icon {
+  font-size: 16px;
+}
+
+.ol-section-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-primary);
+}
+
+.ol-section-body {
+  padding: 20px;
+}
+
+/* ─── Grid ─────────────────────────── */
+.ol-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+/* ─── Field ─────────────────────────── */
+.ol-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ol-field.span-2 { grid-column: span 2; }
+.ol-field.span-3 { grid-column: span 3; }
+
+.ol-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.3px;
+}
+
+.ol-input,
+.ol-select,
+.ol-textarea {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: var(--font);
+  color: var(--text-primary);
+  background: #fff;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+.ol-textarea {
+  height: auto;
+  padding: 10px 12px;
+  resize: vertical;
+  min-height: 72px;
+}
+
+.ol-input:focus,
+.ol-select:focus,
+.ol-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+  outline: none;
+}
+
+/* ─── Toggle ────────────────────────── */
+.ol-toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  padding: 4px 0;
+}
+
+.ol-toggle {
+  width: 40px;
+  height: 22px;
+  border-radius: 999px;
+  background: #d1d5db;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.ol-toggle.on {
+  background: var(--primary);
+}
+
+.ol-toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  transition: left 0.2s;
+}
+
+.ol-toggle.on .ol-toggle-knob {
+  left: 21px;
+}
+
+.ol-toggle-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* ─── Preview Column ────────────────── */
+.ol-preview-sticky {
+  position: sticky;
+  top: 80px;
+}
+
+.ol-preview-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-bottom: none;
+}
+
+.ol-preview-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--primary-light);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.ol-preview-scroll {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  border: 1px solid var(--card-border);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background: #e8eaf0;
+  padding: 20px 16px;
+}
+
+.ol-preview-paper-wrap {
+  filter: drop-shadow(0 4px 20px rgba(0,0,0,0.15));
+}
+
+/* ─── Button extras ─────────────────── */
+.btn-sm {
+  padding: 5px 12px;
+  font-size: 12px;
+  height: 30px;
+  gap: 5px;
+}
+
+/* ─── Mobile action bar ─────────────── */
+.ol-mobile-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: 12px 16px;
+  gap: 10px;
+  z-index: 100;
+}
+
+/* ══════════════════════════════════════════════════
+   OFFER LETTER DOCUMENT (for preview + PDF)
+══════════════════════════════════════════════════ */
+.ol-doc {
+  background: #ffffff;
+  width: 794px;  /* A4 pixel width at 96dpi */
+  min-height: 1100px;
+  padding: 48px 52px;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  color: #1a1a2e;
+  font-size: 13px;
+  line-height: 1.65;
+  box-sizing: border-box;
+}
+
+/* Header */
+.ol-doc-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.ol-doc-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ol-doc-logo-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: #f3f4f6;
+}
+
+.ol-doc-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.ol-doc-company {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a2e;
+  font-family: 'Inter', sans-serif;
+}
+
+.ol-doc-meta {
+  font-size: 11.5px;
+  color: #6b7280;
+  font-family: 'Inter', sans-serif;
+  margin-top: 2px;
+}
+
+.ol-doc-contact {
+  text-align: right;
+  font-size: 11.5px;
+  color: #6b7280;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.7;
+}
+
+/* Divider */
+.ol-doc-divider {
+  height: 2px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6, transparent);
+  border-radius: 2px;
+  margin-bottom: 24px;
+}
+
+/* Title row */
+.ol-doc-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.ol-doc-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: #1a1a2e;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.ol-doc-ref {
+  text-align: right;
+  font-size: 12px;
+  color: #6b7280;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.7;
+}
+
+.ol-doc-valid {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+/* Paragraphs */
+.ol-doc-para {
+  margin: 0 0 14px;
+  text-align: justify;
+}
+
+/* Details table */
+.ol-doc-table {
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 18px 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.ol-doc-table-title {
+  background: #f3f4f6;
+  padding: 9px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* .ol-doc-rows — intentionally unstyled, rows use flex */
+
+.ol-doc-row {
+  display: flex;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.ol-doc-row:last-child { border-bottom: none; }
+
+.ol-doc-row-label {
+  flex: 0 0 180px;
+  padding: 9px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  background: #fafafa;
+  border-right: 1px solid #f3f4f6;
+}
+
+.ol-doc-row-value {
+  flex: 1;
+  padding: 9px 16px;
+  font-size: 13px;
+  color: #111827;
+  font-weight: 500;
+}
+
+/* ── Compensation breakdown table ── */
+.ol-doc-comp-head {
+  display: flex;
+  background: #f3f4f6;
+  border-bottom: 1.5px solid #e5e7eb;
+  padding: 7px 0;
+}
+
+.ol-doc-comp-row {
+  display: flex;
+  border-bottom: 1px solid #f3f4f6;
+  font-family: 'Inter', sans-serif;
+}
+
+.ol-doc-comp-row:last-child { border-bottom: none; }
+
+.ol-doc-comp-col {
+  flex: 0 0 140px;
+  padding: 8px 16px;
+  font-size: 12.5px;
+  color: #374151;
+  text-align: right;
+}
+
+.ol-comp-bold {
+  background: #f9fafb;
+  font-weight: 700;
+  border-top: 1.5px solid #e5e7eb;
+}
+
+.ol-comp-bold .ol-doc-row-label,
+.ol-comp-bold .ol-doc-comp-col {
+  font-weight: 700;
+  color: #111827;
+}
+
+.ol-comp-accent {
+  background: #eff6ff;
+}
+
+.ol-comp-accent .ol-doc-row-label,
+.ol-comp-accent .ol-doc-comp-col {
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.ol-comp-muted .ol-doc-row-label,
+.ol-comp-muted .ol-doc-comp-col {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Blocks */
+.ol-doc-block {
+  margin: 16px 0;
+}
+
+.ol-doc-block-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+  padding-bottom: 5px;
+  border-bottom: 1.5px solid #e5e7eb;
+}
+
+.ol-doc-list {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.ol-doc-list li {
+  margin-bottom: 6px;
+  font-size: 12.5px;
+  color: #374151;
+}
+
+/* Signatures */
+.ol-doc-sig-row {
+  display: flex;
+  gap: 40px;
+  margin-top: 40px;
+  padding-top: 16px;
+  flex-wrap: wrap;
+}
+
+.ol-doc-sig {
+  flex: 1;
+  min-width: 140px;
+}
+
+.ol-doc-sig-accept {
+  border-left: 2px dashed #d1d5db;
+  padding-left: 24px;
+}
+
+.ol-doc-sig-line {
+  border-top: 1.5px solid #374151;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.ol-doc-sig-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.ol-doc-sig-role {
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.ol-doc-sig-co {
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px;
+  color: #6366f1;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* Footer */
+.ol-doc-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 36px;
+  padding-top: 14px;
+  border-top: 1.5px solid #e5e7eb;
+  font-family: 'Inter', sans-serif;
+}
+
+.ol-doc-footer-co {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6366f1;
+}
+
+.ol-doc-footer-note {
+  font-size: 10.5px;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* ── Responsive ──────────────────────── */
+@media (max-width: 1200px) {
+  .ol-layout.preview-open .ol-form-col {
+    flex: 0 0 45%;
+  }
+  .ol-layout.preview-open .ol-preview-col {
+    flex: 0 0 55%;
+  }
+}
+
+@media (max-width: 900px) {
+  .ol-layout.preview-open {
+    flex-direction: column;
+  }
+  .ol-layout.preview-open .ol-form-col,
+  .ol-layout.preview-open .ol-preview-col {
+    flex: 0 0 100%;
+    width: 100%;
+  }
+  .ol-preview-sticky {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .ol-grid {
+    grid-template-columns: 1fr;
+  }
+  .ol-field.span-2,
+  .ol-field.span-3 {
+    grid-column: span 1;
+  }
+  .ol-section-body {
+    padding: 16px;
+  }
+  .ol-mobile-bar {
+    display: flex;
+  }
+  .ol-page {
+    padding-bottom: 72px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ol-doc {
+    width: 100%;
+    min-width: 320px;
+    padding: 24px 18px;
+    font-size: 11px;
+  }
+  .ol-doc-title { font-size: 16px; }
+  .ol-doc-sig-row { gap: 20px; }
+}

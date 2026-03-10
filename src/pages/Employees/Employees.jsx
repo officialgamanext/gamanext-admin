@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import {
   collection, doc, setDoc, updateDoc, deleteDoc, getDocs, query, orderBy
 } from 'firebase/firestore';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signOut as secondarySignOut } from 'firebase/auth';
 import emailjs from '@emailjs/browser';
-import { db, auth } from '../../firebase';
+import { db, auth, secondaryAuth } from '../../firebase';
 import Table from '../../components/Table/Table';
 import '../../components/UI/UI.css';
 import '../../components/Modal/Modal.css';
@@ -349,33 +349,25 @@ function AddEmployeeModal({ onClose, onSaved, showToast }) {
 
     setSaving(true);
     try {
-      // 1) Create Firebase Auth user
-      await createUserWithEmailAndPassword(auth, form.username, form.password);
+      // 1) Create Firebase Auth user on the SECONDARY app so the
+      //    admin session on the primary app is never disturbed.
+      await createUserWithEmailAndPassword(secondaryAuth, form.username, form.password);
 
-      // 2) Save to Firestore (password NOT stored)
+      // 2) Immediately sign the secondary app out — we don't need it signed in.
+      await secondarySignOut(secondaryAuth);
+
+      // 3) Save to Firestore (password NOT stored)
       const { password, ...safeData } = form;
       await setDoc(doc(db, 'employees', form.employeeId), {
         ...safeData,
         createdAt: new Date().toISOString(),
       });
 
-      // 3) Send welcome email to personal email
-      // try {
-      //   await sendWelcomeMail({
-      //     name:       form.name,
-      //     employeeId: form.employeeId,
-      //     username:   form.username,
-      //     password:   form.password,
-      //     email:      form.email,
-      //   });
-      // } catch (mailErr) {
-      //   console.warn('Email send failed (EmailJS not configured?):', mailErr);
-      // }
-
       onSaved();
       onClose();
-      // showToast(`✅ ${form.name} added successfully! Welcome email sent.`);
     } catch (err) {
+      // If Firestore save failed but auth user was created, still sign out secondary
+      try { await secondarySignOut(secondaryAuth); } catch (_) {}
       setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setSaving(false);

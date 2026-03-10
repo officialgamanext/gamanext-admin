@@ -6,6 +6,7 @@ import Employees from "./pages/Employees/Employees";
 import EmployeeDetails from "./pages/EmployeeDetails/EmployeeDetails";
 import Leaves from "./pages/Leaves/Leaves";
 import Timesheet from "./pages/Timesheet/Timesheet";
+import OfferLetter from "./pages/OfferLetter/OfferLetter";
 import Login from "./pages/Login/Login";
 import "./index.css";
 
@@ -56,6 +57,7 @@ function AppRoutes() {
           <Route path="employees/:empId"   element={<EmployeeDetails />} />
           <Route path="leaves"             element={<Leaves />} />
           <Route path="timesheet"          element={<Timesheet />} />
+          <Route path="offer-letter"        element={<OfferLetter />} />
         </Route>
       </Routes>
     </BrowserRouter>
