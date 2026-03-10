@@ -57,26 +57,26 @@ const INITIAL = {
 
 /* ── Compensation breakdown helper ── */
 const buildBreakdown = (ctcAnnual) => {
-  const annual = parseFloat(ctcAnnual);
+  const annual  = parseFloat(ctcAnnual);
   if (isNaN(annual) || annual <= 0) return null;
-  const monthly    = annual / 12;
-  const basic      = Math.round(monthly * 0.40);
-  const hra        = Math.round(monthly * 0.20);
-  const ta         = Math.round(monthly * 0.05);
-  const medical    = Math.round(monthly * 0.05);
-  const special    = Math.round(monthly - basic - hra - ta - medical);
-  const pf         = Math.round(basic * 0.12);
-  const grossM     = Math.round(basic + hra + ta + medical + special);
-  const netM       = Math.round(grossM - pf);
-  const fmt2 = (n) => `₹${n.toLocaleString('en-IN')}`;
+  const monthly = annual / 12;
+  const basic   = Math.round(monthly * 0.40);
+  const hra     = Math.round(monthly * 0.20);
+  const ta      = Math.round(monthly * 0.05);
+  const medical = Math.round(monthly * 0.05);
+  const special = Math.round(monthly - basic - hra - ta - medical);
+  const pf      = 0;  // PF not applicable currently
+  const grossM  = Math.round(basic + hra + ta + medical + special);
+  const netM    = grossM; // No deductions
+  const fmt2    = (n) => `₹${n.toLocaleString('en-IN')}`;
   return [
     { label: 'Basic Salary',              monthly: fmt2(basic),   annual: fmt2(basic * 12) },
-    { label: 'House Rent Allowance (HRA)',monthly: fmt2(hra),     annual: fmt2(hra * 12) },
-    { label: 'Transport Allowance',       monthly: fmt2(ta),      annual: fmt2(ta * 12) },
+    { label: 'House Rent Allowance (HRA)',monthly: fmt2(hra),     annual: fmt2(hra * 12)   },
+    { label: 'Transport Allowance',       monthly: fmt2(ta),      annual: fmt2(ta * 12)    },
     { label: 'Medical Allowance',         monthly: fmt2(medical), annual: fmt2(medical * 12) },
     { label: 'Special Allowance',         monthly: fmt2(special), annual: fmt2(special * 12) },
     { label: 'Gross Salary',              monthly: fmt2(grossM),  annual: fmt2(grossM * 12), bold: true },
-    { label: 'Provident Fund (Employee)', monthly: `(${fmt2(pf)})`, annual: `(${fmt2(pf * 12)})`, muted: true },
+    { label: 'Provident Fund (Employee)', monthly: fmt2(pf),      annual: fmt2(pf), muted: true },
     { label: 'Net Take-Home',             monthly: fmt2(netM),    annual: fmt2(netM * 12), bold: true, accent: true },
   ];
 };
