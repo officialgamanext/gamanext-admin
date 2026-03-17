@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { collectionGroup, getDocs, query } from 'firebase/firestore';
+import { collectionGroup, getDocs, query, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import Table from '../../components/Table/Table';
 import '../../components/UI/UI.css';
@@ -39,6 +39,12 @@ export default function Timesheet() {
   const [filterMonth, setFilterMonth] = useState('');
   const [filterYear, setFilterYear]   = useState('');
 
+  /* Edit state */
+  const [showEdit, setShowEdit] = useState(false);
+  const [editingRow, setEditingRow] = useState(null);
+  const [editForm, setEditForm] = useState({ checkIn: '', checkOut: '', hoursWorked: '', notes: '' });
+  const [saving, setSaving] = useState(false);
+
   /* ── Fetch all timesheets via collectionGroup (no orderBy = no index needed) ── */
   const fetchRecords = useCallback(async () => {
     setLoading(true);
@@ -62,6 +68,49 @@ export default function Timesheet() {
   }, []);
 
   useEffect(() => { fetchRecords(); }, [fetchRecords]);
+
+  const handleDelete = async (row) => {
+    if (!window.confirm(`Are you sure you want to delete this entry for ${row.date}?`)) return;
+    try {
+      await deleteDoc(doc(db, 'employees', row._empId, 'timesheets', row.id));
+      alert('Entry deleted successfully');
+      fetchRecords();
+    } catch (e) {
+      console.error('Delete error:', e);
+      alert('Failed to delete entry');
+    }
+  };
+
+  const handleEdit = (row) => {
+    setEditingRow(row);
+    setEditForm({
+      checkIn: row.checkIn || '',
+      checkOut: row.checkOut || '',
+      hoursWorked: row.hoursWorked || '',
+      notes: row.notes || ''
+    });
+    setShowEdit(true);
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const docRef = doc(db, 'employees', editingRow._empId, 'timesheets', editingRow.id);
+      await updateDoc(docRef, {
+        ...editForm,
+        hoursWorked: Number(editForm.hoursWorked)
+      });
+      setShowEdit(false);
+      alert('Entry updated successfully');
+      fetchRecords();
+    } catch (e) {
+      console.error('Update error:', e);
+      alert('Failed to update entry');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   /* ── Computed years from data ── */
   const availableYears = [...new Set(records.map(r => r.date?.slice(0, 4)).filter(Boolean))].sort((a, b) => b - a);
@@ -150,13 +199,21 @@ export default function Timesheet() {
       </span>
     )},
     {
-      key: 'status', label: 'Status',
-      render: (_, row) => {
-        const h = Number(row.hoursWorked || 0);
-        if (h >= 9) return <span className="badge badge-success"><span className="badge-dot" />On Track</span>;
-        if (h >= 7) return <span className="badge badge-warning"><span className="badge-dot" />Short</span>;
-        return <span className="badge badge-danger"><span className="badge-dot" />Under Hours</span>;
-      }
+      key: 'actions', label: 'Actions',
+      render: (_, row) => (
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className="ts-action-btn edit" onClick={() => handleEdit(row)} title="Edit">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+          </button>
+          <button className="ts-action-btn delete" onClick={() => handleDelete(row)} title="Delete">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" />
+            </svg>
+          </button>
+        </div>
+      )
     },
   ];
 
@@ -346,6 +403,42 @@ export default function Timesheet() {
             )
           )}
         </>
+      )}
+
+      {/* ── Edit Modal ── */}
+      {showEdit && (
+        <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setShowEdit(false)}>
+          <div className="modal-box">
+            <div className="modal-header">
+              <h2 className="modal-title">Edit Entry - {editingRow.date}</h2>
+              <button className="close-btn" onClick={() => setShowEdit(false)}>×</button>
+            </div>
+            <form onSubmit={handleUpdate} className="modal-form">
+              <div className="form-group">
+                <label>Check In Time</label>
+                <input type="time" value={editForm.checkIn} onChange={e => setEditForm({...editForm, checkIn: e.target.value})} />
+              </div>
+              <div className="form-group">
+                <label>Check Out Time</label>
+                <input type="time" value={editForm.checkOut} onChange={e => setEditForm({...editForm, checkOut: e.target.value})} />
+              </div>
+              <div className="form-group">
+                <label>Hours Worked</label>
+                <input type="number" step="0.1" required value={editForm.hoursWorked} onChange={e => setEditForm({...editForm, hoursWorked: e.target.value})} />
+              </div>
+              <div className="form-group">
+                <label>Notes</label>
+                <textarea rows={3} style={{ width: '100%', padding: '10px', borderRadius: 8, border: '1.5px solid #e2e8f0' }} value={editForm.notes} onChange={e => setEditForm({...editForm, notes: e.target.value})} />
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowEdit(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={saving}>
+                  {saving ? 'Saving...' : 'Update Record'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );
