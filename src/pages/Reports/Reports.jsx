@@ -12,7 +12,7 @@ export default function Reports() {
         projectStatus: { Ongoing: 0, Completed: 0, Pending: 0 }
     });
     const [loading, setLoading] = useState(true);
-    const [timeFilter, setTimeFilter] = useState('all'); // all, thisMonth, lastMonth, thisYear, lastYear, custom
+    const [timeFilter, setTimeFilter] = useState('thisMonth'); // all, thisMonth, lastMonth, thisYear, lastYear, custom
     const [customDate, setCustomDate] = useState({
         month: new Date().getMonth() + 1,
         year: new Date().getFullYear()
