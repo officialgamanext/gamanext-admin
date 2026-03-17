@@ -11,6 +11,7 @@ import OfferLetter from "./pages/OfferLetter/OfferLetter";
 import EmployeeLeaves from "./pages/EmployeePortal/EmployeeLeaves";
 import EmployeeTimesheet from "./pages/EmployeePortal/EmployeeTimesheet";
 import Login from "./pages/Login/Login";
+import Invoices from "./pages/Invoices/Invoices";
 import "./index.css";
 import "./components/EmployeePortal/EmployeePortal.css";
 
@@ -82,6 +83,7 @@ function AppRoutes() {
             <Route path="leaves"             element={<Leaves />} />
             <Route path="timesheet"          element={<Timesheet />} />
             <Route path="offer-letter"       element={<OfferLetter />} />
+            <Route path="invoices"           element={<Invoices />} />
           </Route>
         </Routes>
       </BrowserRouter>
