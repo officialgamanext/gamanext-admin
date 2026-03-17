@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import toast from 'react-hot-toast';
 import './OfferLetter.css';
 
 /* ─── Helpers ────────────────────────────────────── */
@@ -411,7 +412,7 @@ export default function OfferLetter() {
       pdf.save(filename);
     } catch (err) {
       console.error('PDF generation failed:', err);
-      alert('Failed to generate PDF. Please try again.');
+      toast.error('Failed to generate PDF');
     } finally {
       setDownloading(false);
     }

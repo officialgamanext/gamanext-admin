@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import toast from 'react-hot-toast';
 import { db } from '../../../firebase';
 import Table from '../../../components/Table/Table';
 
@@ -60,7 +61,7 @@ export default function PaymentsTab({ customerId }) {
 
     const handleAddPayment = async (e) => {
         e.preventDefault();
-        if (!payForm.projectId || !payForm.totalAmount) return alert('Select project and amount');
+        if (!payForm.projectId || !payForm.totalAmount) return toast.error('Select project and amount');
         setSaving(true);
         try {
             const project = projects.find(p => p.id === payForm.projectId);
@@ -73,10 +74,10 @@ export default function PaymentsTab({ customerId }) {
             setShowPayModal(false);
             setPayForm({ projectId: '', totalAmount: '', note: '' });
             fetchData();
-            alert('Payment record created successfully');
+            toast.success('Payment record created successfully');
         } catch (err) {
             console.error('Error adding payment:', err);
-            alert('Failed to add payment record. Please check your connection.');
+            toast.error('Failed to add payment record');
         } finally {
             setSaving(false);
         }
@@ -103,10 +104,10 @@ export default function PaymentsTab({ customerId }) {
             setEditingInst(null);
             setInstForm({ paymentId: '', amount: '', date: new Date().toISOString().split('T')[0], note: '' });
             fetchData();
-            alert(editingInst ? 'Installment updated' : 'Installment added successfully');
+            toast.success(editingInst ? 'Installment updated' : 'Installment added successfully');
         } catch (err) {
             console.error('Error saving installment:', err);
-            alert('Failed to save installment.');
+            toast.error('Failed to save installment');
         } finally {
             setSaving(false);
         }
@@ -116,9 +117,11 @@ export default function PaymentsTab({ customerId }) {
         if (!window.confirm('Delete this installment?')) return;
         try {
             await deleteDoc(doc(db, 'installments', id));
+            toast.success('Installment deleted');
             fetchData();
         } catch (err) {
             console.error(err);
+            toast.error('Failed to delete installment');
         }
     };
 

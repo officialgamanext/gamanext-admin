@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, orderBy, query, serverTimestamp } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { db } from '../../firebase';
 import Table from '../../components/Table/Table';
 import './Customers.css';
@@ -52,7 +53,7 @@ export default function Customers() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!form.name || !form.mobile) return alert('Name and Mobile are required');
+        if (!form.name || !form.mobile) return toast.error('Name and Mobile are required');
         
         setSaving(true);
         try {
@@ -62,10 +63,11 @@ export default function Customers() {
             });
             setShowAddModal(false);
             setForm({ name: '', mobile: '', businessName: '', email: '' });
+            toast.success('Customer added successfully');
             fetchCustomers();
         } catch (err) {
             console.error('Error adding customer:', err);
-            alert('Failed to add customer');
+            toast.error('Failed to add customer');
         } finally {
             setSaving(false);
         }

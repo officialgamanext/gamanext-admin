@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
+import toast from 'react-hot-toast';
 import { db } from '../../../firebase';
 
 export default function ProfileTab({ customer, onUpdate }) {
@@ -14,10 +15,10 @@ export default function ProfileTab({ customer, onUpdate }) {
             await updateDoc(docRef, form);
             onUpdate(form);
             setIsEditing(false);
-            alert('Profile updated successfully');
+            toast.success('Profile updated successfully');
         } catch (err) {
             console.error('Error updating profile:', err);
-            alert('Failed to update profile');
+            toast.error('Failed to update profile');
         } finally {
             setSaving(false);
         }

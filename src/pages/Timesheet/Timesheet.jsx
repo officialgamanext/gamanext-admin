@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { collectionGroup, getDocs, query, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import toast from 'react-hot-toast';
 import { db } from '../../firebase';
 import Table from '../../components/Table/Table';
 import '../../components/UI/UI.css';
@@ -73,11 +74,11 @@ export default function Timesheet() {
     if (!window.confirm(`Are you sure you want to delete this entry for ${row.date}?`)) return;
     try {
       await deleteDoc(doc(db, 'employees', row._empId, 'timesheets', row.id));
-      alert('Entry deleted successfully');
+      toast.success('Entry deleted successfully');
       fetchRecords();
     } catch (e) {
       console.error('Delete error:', e);
-      alert('Failed to delete entry');
+      toast.error('Failed to delete entry');
     }
   };
 
@@ -102,11 +103,11 @@ export default function Timesheet() {
         hoursWorked: Number(editForm.hoursWorked)
       });
       setShowEdit(false);
-      alert('Entry updated successfully');
+      toast.success('Entry updated successfully');
       fetchRecords();
     } catch (e) {
       console.error('Update error:', e);
-      alert('Failed to update entry');
+      toast.error('Failed to update entry');
     } finally {
       setSaving(false);
     }

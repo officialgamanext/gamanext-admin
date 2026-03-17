@@ -15,6 +15,7 @@ import Invoices from "./pages/Invoices/Invoices";
 import Customers from "./pages/Customers/Customers";
 import CustomerDetails from "./pages/CustomerDetails/CustomerDetails";
 import Reports from "./pages/Reports/Reports";
+import { Toaster } from 'react-hot-toast';
 import "./index.css";
 import "./components/EmployeePortal/EmployeePortal.css";
 
@@ -103,6 +104,7 @@ function AppRoutes() {
 export default function App() {
   return (
     <AuthProvider>
+      <Toaster position="top-right" reverseOrder={false} />
       <AppRoutes />
     </AuthProvider>
   );

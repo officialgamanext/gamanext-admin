@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import toast from 'react-hot-toast';
 import { db } from '../../../firebase';
 import Table from '../../../components/Table/Table';
 
@@ -61,10 +62,11 @@ export default function ProjectsTab({ customerId }) {
             setShowAddModal(false);
             setEditingProject(null);
             setForm({ projectName: '', budget: '', status: 'Ongoing', description: '' });
+            toast.success(editingProject ? 'Project updated' : 'Project added successfully');
             fetchProjects();
         } catch (err) {
             console.error('Error saving project:', err);
-            alert('Failed to save project. Please check if all fields are correct.');
+            toast.error('Failed to save project');
         } finally {
             setSaving(false);
         }
@@ -74,9 +76,11 @@ export default function ProjectsTab({ customerId }) {
         if (!window.confirm('Are you sure you want to delete this project?')) return;
         try {
             await deleteDoc(doc(db, 'projects', id));
+            toast.success('Project deleted');
             fetchProjects();
         } catch (err) {
             console.error('Error deleting project:', err);
+            toast.error('Failed to delete project');
         }
     };
 

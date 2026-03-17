@@ -5,6 +5,7 @@ import {
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { db } from '../../firebase';
+import toast from 'react-hot-toast';
 import Table from '../../components/Table/Table';
 import './Invoices.css';
 
@@ -362,7 +363,7 @@ export default function Invoices() {
     /* ── Save and Download ── */
     const handleSave = async (download = false) => {
         if (!form.customerName.trim()) {
-            alert('Please enter customer name');
+            toast.error('Please enter customer name');
             return;
         }
         
@@ -382,12 +383,12 @@ export default function Invoices() {
                 await generatePDF();
             }
             
-            alert('Invoice saved successfully');
+            toast.success('Invoice saved successfully');
             setView('list');
             setForm(EMPTY_FORM);
         } catch (err) {
             console.error('Error saving invoice:', err);
-            alert('Failed to save invoice');
+            toast.error('Failed to save invoice');
         } finally {
             setSaving(false);
         }
@@ -466,7 +467,7 @@ export default function Invoices() {
             console.log('PDF Saved');
         } catch (err) {
             console.error('PDF Generation Error:', err);
-            alert('Failed to generate PDF. See console for details.');
+            toast.error('Failed to generate PDF');
         }
     };
 
