@@ -18,6 +18,7 @@ const groupBy = (arr, fn) =>
   arr.reduce((acc, item) => { const k = fn(item); (acc[k] = acc[k] || []).push(item); return acc; }, {});
 const fmtMonth = (ym) => { const [y, m] = ym.split('-'); return new Date(y, m - 1).toLocaleString('default', { month: 'long', year: 'numeric' }); };
 
+const getTodayStr = () => new Date().toLocaleDateString('en-CA');
 const EMPTY = { date: '', checkIn: '', checkOut: '', notes: '' };
 
 /* ─── Shared icon buttons ─────────────────────────────── */
@@ -75,7 +76,7 @@ function EditTimesheetModal({ record, empId, onClose, onSaved }) {
           {[['Date','date','date'],['Check In','checkIn','time'],['Check Out','checkOut','time']].map(([label, key, type]) => (
             <div key={key} style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
               <label style={{ fontSize: 11.5, fontWeight: 600, color: 'var(--text-secondary)' }}>{label}</label>
-              <input className="ts-form-input" type={type} value={form[key] || ''} onChange={e => sf(key, e.target.value)} />
+              <input className="ts-form-input" type={type} value={form[key] || ''} readOnly={key === 'date'} onChange={e => sf(key, e.target.value)} />
             </div>
           ))}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
@@ -126,7 +127,7 @@ export default function TimesheetTab({ empId }) {
   const [sub, setSub]         = useState('daily');
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [form, setForm]       = useState({ ...EMPTY });
+  const [form, setForm]       = useState({ ...EMPTY, date: getTodayStr() });
   const [saving, setSaving]   = useState(false);
   const [editTarget, setEditTarget]     = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
@@ -154,7 +155,7 @@ export default function TimesheetTab({ empId }) {
       await addDoc(collection(db, 'employees', empId, 'timesheets'), {
         ...form, hoursWorked, createdAt: new Date().toISOString(),
       });
-      setForm({ ...EMPTY });
+      setForm({ ...EMPTY, date: getTodayStr() });
       fetch();
     } catch (e) { console.error(e); }
     finally { setSaving(false); }
@@ -224,7 +225,7 @@ export default function TimesheetTab({ empId }) {
           <div className="ts-add-card">
             <div className="ts-add-title">➕ Add Timesheet Entry</div>
             <div className="ts-form-row">
-              <div className="ts-form-group"><label className="ts-form-label">Date</label><input className="ts-form-input" type="date" value={form.date} onChange={e => sf('date', e.target.value)} /></div>
+              <div className="ts-form-group"><label className="ts-form-label">Date</label><input className="ts-form-input" type="date" value={form.date} min={getTodayStr()} max={getTodayStr()} readOnly={true} onChange={e => sf('date', e.target.value)} /></div>
               <div className="ts-form-group"><label className="ts-form-label">Check In</label><input className="ts-form-input" type="time" value={form.checkIn} onChange={e => sf('checkIn', e.target.value)} /></div>
               <div className="ts-form-group"><label className="ts-form-label">Check Out</label><input className="ts-form-input" type="time" value={form.checkOut} onChange={e => sf('checkOut', e.target.value)} /></div>
               <div className="ts-form-group"><label className="ts-form-label">Notes</label><input className="ts-form-input" placeholder="Optional notes" value={form.notes} onChange={e => sf('notes', e.target.value)} /></div>
